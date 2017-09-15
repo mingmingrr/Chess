@@ -1,0 +1,48 @@
+body
+	display          flex
+	align-items      center
+	justify-content  center
+	overflow         hidden
+	background-color #222
+	margin  0
+	padding 0
+	width   100vw
+	height  100vh
+
+table#board
+	text-align      center
+	// table-layout    fixed
+	border-collapse collapse
+	// width  100vmin
+	// height 100vmin
+
+	.border
+	.cell
+		padding 0
+		overflow hidden
+
+	.border
+		background-color #753
+		font-size 1.4em
+		color    #ddd
+		overflow hidden
+		width 6vmin
+		height 6vmin
+
+	.cell
+		width 10vmin
+		height 10vmin
+		font-size 3em
+		user-select none
+		// border medium solid gray
+	
+	.cell.light
+		background-color #ec8
+	.cell.dark
+		background-color #c84
+
+	.cell:hover
+		box-shadow inset 0px 0px 0px 1px rgba(128,128,128,1)
+		cursor pointer
+	.cell:active
+		cursor move

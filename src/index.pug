@@ -1,0 +1,29 @@
+doctype html
+
+title Chess
+
+meta(charset='UTF-8')
+
+link(rel='stylesheet' type='text/css' href='style.css')
+
+table#board
+	mixin header
+		tr
+			th.border.horizontal.vertical
+			- for (var i of 'ABCDEFGH')
+				th.border.horizontal= i
+			th.border.horizontal.vertical
+	+ header
+	- for (var i = 8; i > 0; --i)
+		tr
+			th.border.vertical= i
+			- for (var j = 8; j > 0; --j)
+				if (i + j) % 2 == 0
+					td.cell.light(draggable="true")
+				else
+					td.cell.dark(draggable="true")
+			th.border.vertical= i
+	+ header
+
+script(src='https://cdn.rawgit.com/gkz/prelude-ls/master/browser/prelude-browser-min.js')
+script(src='script.js')

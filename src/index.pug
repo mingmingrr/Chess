@@ -17,11 +17,11 @@ table#board
 	- for (var i = 8; i > 0; --i)
 		tr
 			th.border.vertical= i
-			- for (var j = 8; j > 0; --j)
+			- for (var j = 0; j < 8; ++j)
 				if (i + j) % 2 == 0
-					td.cell.light(draggable="true")
+					td.cell.light(draggable="true" ondragover="event.preventDefault()" p="["+(i-1)+","+j+"]")
 				else
-					td.cell.dark(draggable="true")
+					td.cell.dark(draggable="true" ondragover="event.preventDefault()" p="["+(i-1)+","+j+"]")
 			th.border.vertical= i
 	+ header
 

@@ -2,7 +2,7 @@ default: all
 
 pug = $(shell find src -type f -name "*.pug")
 html = $(pug:src/%.pug=lib/%.html)
-pugc = pug
+pugc = node_modules/.bin/pug
 
 styl = $(shell find src -type f -name "*.styl")
 css = $(styl:src/%.styl=lib/%.css)
@@ -12,18 +12,17 @@ ls = $(shell find src -type f -name "*.ls")
 js = $(ls:src/%.ls=lib/%.js)
 lsc = node_modules/.bin/lsc
 
-lib:
-	mkdir -p lib
+lib/%.html: src/%.pug
+	mkdir -p $(shell dirname "$@")
+	$(pugc) < "$<" > "$@"
 
-lib/%.html: src/%.pug lib
-	$(pugc) -o lib src -s "$<"
+lib/%.css: src/%.styl
+	mkdir -p $(shell dirname "$@")
+	$(stylus) -p -o lib "$<" > "$@"
 
-lib/%.css: src/%.styl lib
-	$(stylus) -o lib "$<"
-
-lib/%.js: src/%.ls lib
-	$(lsc) -o lib -b -c "$<"
-	@echo "compiled $<"
+lib/%.js: src/%.ls
+	mkdir -p $(shell dirname "$@")
+	$(lsc) --no-header -p -b -c "$<" > "$@"
 
 .PHONY: all
 all: $(html) $(css) $(js)
@@ -41,3 +40,7 @@ run: all
 .PHONY: watch
 watch:
 	while true; do make --silent; sleep 1; done
+
+.PHONY: clean
+clean:
+	@rm -vrf lib

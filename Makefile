@@ -14,15 +14,18 @@ lsc = node_modules/.bin/lsc
 
 lib/%.html: src/%.pug
 	mkdir -p $(shell dirname "$@")
-	$(pugc) < "$<" > "$@"
+	$(pugc) -P < "$<" > "$@"
+	@echo "  compiled $<"
 
 lib/%.css: src/%.styl
 	mkdir -p $(shell dirname "$@")
 	$(stylus) -p -o lib "$<" > "$@"
+	@echo "  compiled $<"
 
 lib/%.js: src/%.ls
 	mkdir -p $(shell dirname "$@")
 	$(lsc) --no-header -p -b -c "$<" > "$@"
+	@echo "  compiled $<"
 
 .PHONY: all
 all: $(html) $(css) $(js)

@@ -5,7 +5,7 @@ export spawn = (types, get-type=null, carry-count=true) ->
 		type = if Array.is-array types then get-type types else types
 		count = if carry-count then piece.count else 0
 		Pos.set _, board, Pos.add position, target
-			<| piece with type:type, count:count
+			<| {} <<< piece <<< {type:type, count:count}
 		return board
 
 export kill = (piece, position, target, board) ->

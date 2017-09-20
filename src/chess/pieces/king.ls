@@ -55,10 +55,10 @@ export actions =
 		<| ->
 			[
 				it,
-				it with do
+				{} <<< it <<<
 					target: [1, 1]
-					conds: map (-> it with target: [1, 1]), it.conds
-					units: map (-> it with target: [1, 1]), it.units
+					conds: map (-> {} <<< it <<< {target: [1, 1]}), it.conds
+					units: map (-> {} <<< it <<< {target: [1, 1]}), it.units
 			]
 		# straight move
 		<| do

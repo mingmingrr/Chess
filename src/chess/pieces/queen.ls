@@ -3,7 +3,7 @@ require! '../condition.js': Cond
 require! '../symmetry.js': Sym
 
 export symbols = <[\u2655 \u265b]>
-export actions = Sym.sym4 <| concat-map _, [1 to 7] <| ->
+export actions = Sym.sym8 <| concat-map _, [1 to 7] <| ->
 	* 
 		danger: true
 		target: [it, 0]
@@ -14,10 +14,11 @@ export actions = Sym.sym4 <| concat-map _, [1 to 7] <| ->
 			...map _, [1 til it] <| ->
 				target: [it, 0]
 				func: Cond.empty true
-		units: 
+		units:
 			* 
 				target: [it, 0]
 				func: Unit.move
+			...
 	* 
 		danger: true
 		target: [it, it]
@@ -28,7 +29,8 @@ export actions = Sym.sym4 <| concat-map _, [1 to 7] <| ->
 			...map _, [1 til it] <| ->
 				target: [it, it]
 				func: Cond.empty true
-		units: 
+		units:
 			* 
 				target: [it, it]
 				func: Unit.move
+			...

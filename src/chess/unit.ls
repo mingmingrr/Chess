@@ -1,6 +1,12 @@
 require! './position.js' : Pos
 
-export spawn = (types) ->
+export spawn = (types, get-type=null, carry-count=true) ->
+	(piece, position, target, board) ->
+		type = if Array.is-array types then get-type types else types
+		count = if carry-count then piece.count else 0
+		Pos.set _, board, Pos.add position, target
+			<| piece with type:type, count:count
+		return board
 
 export kill = (piece, position, target, board) ->
 	Pos.set null, board <| Pos.add position, target
@@ -11,9 +17,9 @@ export move = (piece, position, target, board) ->
 	Pos.set null, board, position
 	return board
 
-export promote = (types) ->
-	throw new Error 'undefined promotion types' unless types?
+export yank = (direction) ->
 	(piece, position, target, board) ->
-		...
-
-
+		pos = Pos.add position, target
+		Pos.set piece, board, <| Pos.add pos, direction
+		Pos.set null, board, pos
+		return board

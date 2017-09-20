@@ -1,7 +1,21 @@
+require! '../unit.js': Unit
+require! '../condition.js': Cond
+require! '../symmetry.js': Sym
+
 export symbols = <[\u2656 \u265c]>
-export moves =
-	map (-> [it, 0]), [1 to 7]
-	map (-> [0, it]), [1 to 7]
-	map (-> [it, 0]), [-1 to -7 by -1]
-	map (-> [0, it]), [-1 to -7 by -1]
-export takes = moves
+export actions = Sym.sym4 <| map _, [1 to 7] <| ->
+	danger: true
+	target: [it, 0]
+	conds:
+		* 
+			target: [it, 0]
+			func: (not) . Cond.team (==)
+		...map _, [1 til it] <| ->
+			target: [it, 0]
+			func: Cond.empty true
+	units:
+		* 
+			target: [it, 0]
+			func: Unit.move
+		...
+

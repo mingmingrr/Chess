@@ -19,9 +19,9 @@ table.board
 			th.border.vertical= i
 			- for (var j = 0; j < 8; ++j)
 				if (i + j) % 2 == 0
-					td.cell.light(draggable="true" ondragover="event.preventDefault()" p="["+(i-1)+","+j+"]")
+					td.cell.light(draggable="true")
 				else
-					td.cell.dark(draggable="true" ondragover="event.preventDefault()" p="["+(i-1)+","+j+"]")
+					td.cell.dark(draggable="true")
 			th.border.vertical= i
 	+ header
 

@@ -1,54 +1,90 @@
+require! '../unit.js': Unit
+require! '../condition.js': Cond
+require! '../symmetry.js': Sym
+require! './index.js': Pieces
+
 export symbols = <[\u2659 \u265f]>
-export moves =
-	[[0, 1]]
-	...
-export takes =
-	[[-1, 1]]
-	[[1, 1]]
-export premoves =
-	(board, [x, y]) -> # initial double move
-		return null unless @count == 0 and y == 1
-		board = map (-> ^^it), board
-		board.4[x] = board.2[x]
-		board.2[x] = null
-		return board
-	(board, [x, y]) -> # en passant left side
-		return null unless @count == 2 and
-			y == 4 and x != 0 and
-			board.5[x - 1] is null and
-			board.4[x - 1] instanceof Pawn and
-			board.4[x - 1].team != @team and
-			board.4[x - 1].count == 1
-		board = map (-> ^^it), board
-		board.4[x - 1] = null
-		board.5[x - 1] = board.4[x]
-		board.4[x] = null
-		return board
-	(board, [x, y]) -> # en passant right side
-		return null unless @count == 2 and
-			y == 4 and x != 7 and
-			board.5[x + 1] is null and
-			board.4[x + 1] instanceof Pawn and
-			board.4[x + 1].team != @team and
-			board.4[x + 1].count == 1
-		board = map (-> ^^it), board
-		board.4[x + 1] = null
-		board.5[x + 1] = board.4[x]
-		board.4[x] = null
-		return board
-export postmoves =
-	(board, [x, y]) ->
-		return null unless y == 7
-		piece = null
-		while not piece
-			piece = pieces [prompt 'Promote pawn to...']
-			try
-				throw new Error! unless piece
-				piece = new piece @team
-				throw new Error! if piece instanceof [Pawn, King]
-			catch
-				piece = null
-		board = map (-> ^^it), board
-		board.7[x] = piece
-		return board
-	...
+export actions = (++) do
+	* # intial move
+		danger: false
+		target: [0, 2]
+		conds:
+			* 
+				target: [0, 0]
+				func: Cond.count 0
+			* 
+				target: [0, 1]
+				func: Cond.empty true
+			* 
+				target: [0, 2]
+				func: Cond.empty true
+		units:
+			* 
+				target: [0, 2]
+				func: Unit.move
+			...
+	* # regular move
+		danger: false
+		target: [0, 1]
+		conds:
+			* 
+				target: [0, 1]
+				func: Cond.empty true
+			...
+		units:
+			* 
+				target: [0, 1]
+				func: Unit.move
+			* 
+				target: [0, 0]
+				func: Unit.spawn <| (-> &) do
+					Pieces.Queen
+					Pieces.Knight
+					Pieces.Rook
+					Pieces.Bishop
+				cond:
+					* 
+						target: [0, 0]
+						func: Cond.row (==8)
+					...
+<| Sym.sym2
+<| (-> &) do
+	* # diagonal attack
+		danger: true
+		target: [1, 1]
+		conds:
+			* 
+				target: [1, 1]
+				func: Cond.team (!=)
+			...
+		units:
+			* 
+				target: [1, 1]
+				func: Unit.move
+			...
+	* # en passant
+		danger: true
+		target: [1, 0]
+		conds:
+			* 
+				target: [0, 0]
+				func: Cond.count (==2)
+			* 
+				target: [1, 1]
+				func: Cond.empty true
+			* 
+				target: [0, 0]
+				func: Cond.row (==4)
+			* 
+				target: [1, 0]
+				func: Cond.type (==Pieces.Pawn)
+			* 
+				target: [1, 0]
+				func: Cond.count (==1)
+		units:
+			* 
+				target: [1, 0]
+				func: Unit.kill
+			* 
+				target: [1, 1]
+				func: Unit.move

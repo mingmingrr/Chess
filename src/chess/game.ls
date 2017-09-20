@@ -4,30 +4,34 @@ Board :: [[Piece]]
 
 Position :: [Int, Int]
 
+Team :: Int
+
 Piece :: {
-	type :: Type,
-	count :: Int,
-	team :: Int
+	type :: Type
+	team :: Team
+	safe :: Bool
+	danger :: [Team]
 }
 
 Type :: {
-	symbols :: [String],
+	symbols :: [String]
 	actions :: [Action]
 }
 
 Action :: {
-	target :: Position,
+	danger :: Bool = true
+	target :: Position
 	conds :: [Condition]
 	units :: [Unit]
 }
 
 Condition :: {
-	target :: Position,
+	target :: Position
 	func :: Piece -> Position -> Position -> Board -> Bool
 }
 
 Unit :: {
-	target :: Position,
+	target :: Position
 	func :: Piece -> Position -> Position -> Board -> Board
 }
 

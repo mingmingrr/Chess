@@ -1,34 +1,76 @@
+require! '../unit.js': Unit
+require! '../condition.js': Cond
+require! '../symmetry.js': Sym
+
 export symbols = <[\u2654 \u265a]>
-export moves =
-	[[-1, -1]]
-	[[-1, 0]]
-	[[-1, 1]]
-	[[0, -1]]
-	[[0, 1]]
-	[[1, -1]]
-	[[1, 0]]
-	[[1, 1]]
-export takes = moves
-export premoves =
-	(board, [x, y]) -> # castle king side
-		return null unless count == 0 and
-			board.0.4 instanceof King and
-			all (==null), board.0[5 to 6] and
-			board.0.7 instanceof Rook and
-			board.0.7.count == 0
-		board = map (-> ^^it), board
-		# TODO king checks
-		[board.0.5, board.0.6] = [board.0.7, board.0.4]
-		[board.0.7, board.0.4] = [null, null]
-		return board
-	(board, [x, y]) -> # castle queen side
-		return null unless count == 0 and
-			board.0.4 instanceof King and
-			all (==null), board.0[1 to 3] and
-			board.0.0 instanceof Rook and
-			board.0.0.count == 0
-		board = map (-> ^^it), board
-		# TODO king checks
-		[board.0.3, board.0.2] = [board.0.0, board.0.4]
-		[board.0.0, board.0.4] = [null, null]
-		return board
+export actions = (++) do
+	* # castling queen side
+		danger: false
+		target: [-4, 0]
+		conds:
+			* 
+				target: [0, 0]
+				func: Cond.count (==0)
+			* 
+				target: [-4, 0]
+				func: Cond.count (==0)
+			...map _, [-1 to -3 by -1] <| ->
+				target: [it, 0]
+				func: Cond.empty true
+			...map _, [0 to -4 by -1] <| ->
+				target: [it, 0]
+				func: Cond.safe true
+		units:
+			* 
+				target: [-2, 0]
+				func: Unit.move
+			* 
+				target: [-4, 0]
+				func: Unit.yank [3, 0]
+	* # castling king side
+		danger: false
+		target: [3, 0]
+		conds:
+			* 
+				target: [0, 0]
+				func: Cond.count (==0)
+			* 
+				target: [3, 0]
+				func: Cond.count (==0)
+			...map _, [1 to 2] <| ->
+				target: [it, 0]
+				func: Cond.empty true
+			...map _, [0 to 3] <| ->
+				target: [it, 0]
+				func: Cond.safe true
+		units:
+			* 
+				target: [2, 0]
+				func: Unit.move
+			* 
+				target: [3, 0]
+				func: Unit.yank [-2, 0]
+<| Sym.sym4
+# diagonal move
+<| ->
+	[
+		it,
+		it with do
+			target: [1, 1]
+			conds: map (-> it with target: [1, 1]), it.conds
+			units: map (-> it with target: [1, 1]), it.units
+	]
+# straight move
+<| do
+	danger: true
+	target: [0, 1]
+	conds:
+		* 
+			target: [0, 1]
+			func: (not) . Cond.team (==)
+		...
+	units: 
+		* 
+			target: [0, 1]
+			func: Unit.move
+		...

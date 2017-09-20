@@ -12,6 +12,8 @@ ls = $(shell find src -type f -name "*.ls")
 js = $(ls:src/%.ls=lib/%.js)
 lsc = node_modules/.bin/lsc
 
+webpack = node_modules/.bin/webpack
+
 lib/%.html: src/%.pug
 	mkdir -p $(shell dirname "$@")
 	$(pugc) -P < "$<" > "$@"
@@ -27,22 +29,27 @@ lib/%.js: src/%.ls
 	$(lsc) --no-header -p -b -c "$<" > "$@"
 	@echo "  compiled $<"
 
-.PHONY: all
-all: $(html) $(css) $(js)
+webpack.config.js:
+	$(lsc) --no-header -p -b -c webpack.config.ls > webpack.config.js
 
-.PHONY: status
-status:
-	@echo $(html)
-	@echo $(css)
-	@echo $(js)
+.PHONY: all
+all: compile pack
+
+.PHONY: compile
+compile: $(html) $(css) $(js)
+
+.PHONY: pack
+pack: webpack.config.js
+	${webpack}
 
 .PHONY: run
 run: all
 	xdg-open lib/index.html
 
 .PHONY: watch
-watch:
-	while true; do make --silent; sleep 1; done
+watch: webpack.config.js compile
+	${webpack} --watch &
+	while true; do make --silent compile || notify-send -a make "make failed"; sleep 1; done
 
 .PHONY: clean
 clean:

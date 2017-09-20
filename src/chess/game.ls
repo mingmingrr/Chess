@@ -32,6 +32,7 @@ Condition :: {
 
 Unit :: {
 	target :: Position
+	conds :: [Condition] = []
 	func :: Piece -> Position -> Position -> Board -> Board
 }
 

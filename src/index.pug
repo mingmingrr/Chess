@@ -15,7 +15,7 @@ table.board
 			th.border.horizontal.vertical
 	+ header
 	- for (var i = 8; i > 0; --i)
-		tr
+		tr.row
 			th.border.vertical= i
 			- for (var j = 0; j < 8; ++j)
 				if (i + j) % 2 == 0
@@ -26,4 +26,4 @@ table.board
 	+ header
 
 script(src='https://cdn.rawgit.com/gkz/prelude-ls/master/browser/prelude-browser-min.js')
-script(src='script.js')
+script(src='bundle.js')

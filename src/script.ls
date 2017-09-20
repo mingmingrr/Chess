@@ -1,89 +1,49 @@
-window <<< require 'prelude-ls'
+require! 'prelude-ls': Prelude
+global import Prelude
+
+require! './chess/pieces/index.js': Pieces
 
 trace = -> console.log it; it
 
-move-by = ([x1, y1], [x2, y2]) -->
-	[x1 + x2, y1 + y2]
+nodes = document.query-selector-all '.board .row'
+|> map (.query-selector-all \.cell) |> reverse
 
-all-cond = (fs, x) -->
-	all (-> it x), fs
+board = [
+	<[Rook Knight Bishop Queen King Bishop Knight Rook]>
+	<[Pawn Pawn   Pawn   Pawn  Pawn Pawn   Pawn   Pawn]>
+]
+|> -> return
+	...map _, it <| map ->
+		type: Pieces[it]
+		team: 0
+		count: 0
+		danger: []
+	...map (-> [null] * 8), [til 4]
+	...map _, reverse it <| map ->
+		type: Pieces[it]
+		team: 1
+		count: 0
+		danger: []
+console.log \board, board
 
-class Game
-	(@nodes, @board=null) ->
-		if @board is null
-			@board =
-				[Pawn , Pawn   , Pawn   , Pawn  , Pawn , Pawn   , Pawn   , Pawn]
-				[Rook , Knight , Bishop , Queen , King , Bishop , Knight , Rook]
-		if @board.length == 2
-			@board =
-				(map (map -> new it 0), (reverse @board)) ++
-				(map (-> [null] * 8), [til 4]) ++
-				(map (map -> new it 1), @board)
-		map _, @nodes <| map (n) ->
-			[x, y] = JSON.parse n.get-attribute \p
-			n.add-event-listener \dragover, (event) !->
-				event.prevent-default!
-			n.add-event-listener \dragstart, (event) !->
-				console.log \dragstart, event
-			n.add-event-listener \drop, (event) !->
-				console.log \drop, event
-		@update!
-	update: ->
-		zip-with do
-			zip-with ->
-				if &1
-					then &0.text-content = &1.@@symbols[&1.team]
-					else ''
-			@nodes
-			@board
-		return @
-	move: ([xi, yi], [x, y]) -->
-		[x, y] = [xi + x, yi + y]
-		return null unless @board[y][x] is null
-		[@board[yi][xi], @board[y][x]] = [null, @board[yi][xi]]
-		return @
-	take: ([xi, yi], [x, y]) -->
-		[x, y] = [xi + x, yi + y]
-		return null unless @board[y][x] is not null or
-			@board[y][x].team != @board[yi][xi].team
-		[@board[yi][xi], @board[y][x]] = [null, @board[yi][xi]]
-		return @
-	empty: ([x, y]) ->
-		@board[y][x] == null
-	bounded: ([x, y]) ->
-		0 <= x < 8 and 0 <= y < 8
-	piece-at: ([x, y]) ->
-		@board[y][x]
-	friendly: ([x1, y1], [x2, y2]) -->
-		(==) `over` ((.team) << @piece-at)
-	moves: ([xi, yi]) ->
-		concat-map do
-			take-while <| all-cond [@bounded, @empty . move-by [xi, yi]]
-			@board[yi][xi].@@moves
-	takes: ([xi, yi]) ->
-		filter do
-			all-cond [@bounded, (not) . @empty, (not) . @friendly [xi, yi]] .
-			move-by [xi, yi]
-		<| map do
-			head << drop-while << all-cond @bounded, @empty . move-by [xi, yi]
-			@board[yi][xi].@@takes
-	attacks: ([xi, yi]) ->
-		(++) do
-			concat-map do
-				take-while <| all-cond [@bounded, @empty . move-by [xi, yi]]
-				@board[yi][xi].@@takes
-			@attacks [xi, yi]
-	all-attacks: (team) ->
-		s = new Set!
-		for y til @board.length
-			for x til @board.0.length
-				continue unless @piece-at [x, y] .team == team
-				each do
-					set.add . JSON.stringify . move-by [x, y]
-					@attacks [x, y]
-		return s
+do sync = !->
+	zip-with do
+		zip-with !->
+			return unless &1
+			&0.text-content = &1.type.symbols[&1.team]
+		nodes
+		board
 
-game = new Game do
-	document.query-selector-all '#board tr'
-	|> map (.query-selector-all \.cell)
-	|> filter (.length) |> reverse
+for ns, row in nodes
+	for node, col in ns
+		node.set-attribute \p, JSON.stringify [col, row]
+		node.add-event-listener \dragover, ->
+			it.prevent-default!
+		node.add-event-listener \dragstart, ->
+			it.data-transfer.set-data \text, do
+				it.target.get-attribute \p
+		node.add-event-listener \drop, ->
+			position = JSON.parse it.data-transfer.get-data \text
+			target = JSON.parse it.target.get-attribute \p
+			alert (JSON.stringify position) + (JSON.stringify target)
+

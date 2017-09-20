@@ -4,7 +4,7 @@ export count = (func) ->
 	not-empty = empty false
 	(piece, position, target, board) ->
 		not-empty ... and func do
-			(.count) <| Pos.at board <| Pos.add position.target
+			(.count) <| Pos.at board <| Pos.add position, target
 
 export type = (func) ->
 	not-empty = empty false
@@ -15,7 +15,7 @@ export type = (func) ->
 export team = (func) ->
 	not-empty = empty false
 	(piece, position, target, board) ->
-		not-empty ... and func piece.team do
+		not-empty ... and func piece.team, do
 			(.team) <| Pos.at board <| Pos.add position, target
 
 export empty = (func) ->
@@ -26,7 +26,7 @@ export empty = (func) ->
 export safe = (func) ->
 	func = switch func | true => (not in) | false => (in) | otherwise => func
 	(piece, position, target, board) ->
-		func Piece.team do
+		func piece.team, do
 			(.danger) <| Pos.at board <| Pos.add position, target
 
 export row = (func) ->

@@ -17,17 +17,17 @@ webpack = node_modules/.bin/webpack
 lib/%.html: src/%.pug
 	mkdir -p $(shell dirname "$@")
 	$(pugc) -P < "$<" > "$@"
-	@echo "  compiled $<"
+	@echo "--> compiled $<"
 
 lib/%.css: src/%.styl
 	mkdir -p $(shell dirname "$@")
 	$(stylus) -p -o lib "$<" > "$@"
-	@echo "  compiled $<"
+	@echo "--> compiled $<"
 
 lib/%.js: src/%.ls
 	mkdir -p $(shell dirname "$@")
 	$(lsc) --no-header -p -b -c "$<" > "$@"
-	@echo "  compiled $<"
+	@echo "--> compiled $<"
 
 webpack.config.js:
 	$(lsc) --no-header -p -b -c webpack.config.ls > webpack.config.js

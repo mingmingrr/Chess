@@ -18,5 +18,6 @@ export actions = Sym.sym8 <| map _, [1 to 7] <| ->
 		* 
 			target: [it, it]
 			func: Unit.move
+			conds: []
 		...
 

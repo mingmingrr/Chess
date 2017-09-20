@@ -11,7 +11,7 @@ export actions =
 		conds:
 			* 
 				target: [0, 0]
-				func: Cond.count 0
+				func: Cond.count (==0)
 			* 
 				target: [0, 1]
 				func: Cond.empty true
@@ -22,6 +22,7 @@ export actions =
 			* 
 				target: [0, 2]
 				func: Unit.move
+				conds: []
 			...
 	* # regular move
 		danger: false
@@ -35,6 +36,7 @@ export actions =
 			* 
 				target: [0, 1]
 				func: Unit.move
+				conds: []
 			* 
 				target: [0, 0]
 				func: Unit.spawn <| (-> &) do
@@ -42,10 +44,10 @@ export actions =
 					Pieces.Knight
 					Pieces.Rook
 					Pieces.Bishop
-				cond:
+				conds:
 					* 
-						target: [0, 0]
-						func: Cond.row (==8)
+						target: [0, 1]
+						func: Cond.row (==7)
 					...
 	...Sym.sym2 (-> &) do
 		* # diagonal attack
@@ -60,7 +62,19 @@ export actions =
 				* 
 					target: [1, 1]
 					func: Unit.move
-				...
+					conds: []
+				* 
+					target: [0, 0]
+					func: Unit.spawn <| (-> &) do
+						Pieces.Queen
+						Pieces.Knight
+						Pieces.Rook
+						Pieces.Bishop
+					conds:
+						* 
+							target: [0, 1]
+							func: Cond.row (==7)
+						...
 		* # en passant
 			danger: true
 			target: [1, 0]
@@ -84,6 +98,8 @@ export actions =
 				* 
 					target: [1, 0]
 					func: Unit.kill
+					conds: []
 				* 
 					target: [1, 1]
 					func: Unit.move
+					conds: []

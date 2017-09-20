@@ -24,9 +24,11 @@ export actions =
 			* 
 				target: [-2, 0]
 				func: Unit.move
+				conds: []
 			* 
 				target: [-4, 0]
 				func: Unit.yank [3, 0]
+				conds: []
 	* # castling king side
 		danger: false
 		target: [3, 0]
@@ -47,21 +49,27 @@ export actions =
 			* 
 				target: [2, 0]
 				func: Unit.move
+				conds: []
 			* 
 				target: [3, 0]
 				func: Unit.yank [-2, 0]
-	...Sym.sym4
-		# diagonal move
-		<| ->
-			[
-				it,
-				{} <<< it <<<
+				conds: []
+	...Sym.sym8 [
+		* # diagonal move
+			danger: true
+			target: [1, 1]
+			conds:
+				* 
 					target: [1, 1]
-					conds: map (-> {} <<< it <<< {target: [1, 1]}), it.conds
-					units: map (-> {} <<< it <<< {target: [1, 1]}), it.units
-			]
-		# straight move
-		<| do
+					func: (not) . Cond.team (==)
+				...
+			units: 
+				* 
+					target: [1, 1]
+					func: Unit.move
+					conds: []
+				...
+		* # straight move
 			danger: true
 			target: [0, 1]
 			conds:
@@ -73,4 +81,6 @@ export actions =
 				* 
 					target: [0, 1]
 					func: Unit.move
+					conds: []
 				...
+		]

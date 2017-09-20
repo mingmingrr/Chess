@@ -15,5 +15,6 @@ export actions = Sym.sym8 <| (-> &) do
 		* 
 			target: [1, 2]
 			func: Unit.move
+			conds: []
 		...
 

@@ -1,6 +1,8 @@
 require! 'prelude-ls': Prelude
 global import Prelude
 
+require! './chess/game.js': Game
+require! './chess/position.js': Pos
 require! './chess/pieces/index.js': Pieces
 
 trace = -> console.log it; it
@@ -29,8 +31,9 @@ console.log \board, board
 do sync = !->
 	zip-with do
 		zip-with !->
-			return unless &1
-			&0.text-content = &1.type.symbols[&1.team]
+			&0.text-content = if &1?
+				then &1.type.symbols[&1.team]
+				else ''
 		nodes
 		board
 
@@ -44,6 +47,14 @@ for ns, row in nodes
 				it.target.get-attribute \p
 		node.add-event-listener \drop, ->
 			position = JSON.parse it.data-transfer.get-data \text
-			target = JSON.parse it.target.get-attribute \p
-			alert (JSON.stringify position) + (JSON.stringify target)
+			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
+			piece = Pos.at board, position
+			return unless Game.valid piece, position, target, board
+			Game.move piece, position, target, board
+			sync!
+			console.log \board, board
+
+console.log \queen, map (.target), Pieces.Queen.actions
+console.log \king, map (.target), Pieces.King.actions
+console.log \rook, map (.target), Pieces.Rook.actions
 

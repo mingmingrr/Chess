@@ -3,7 +3,7 @@ require! '../condition.js': Cond
 require! '../symmetry.js': Sym
 
 export symbols = <[\u2654 \u265a]>
-export actions = (++) do
+export actions =
 	* # castling queen side
 		danger: false
 		target: [-4, 0]
@@ -50,27 +50,27 @@ export actions = (++) do
 			* 
 				target: [3, 0]
 				func: Unit.yank [-2, 0]
-<| Sym.sym4
-# diagonal move
-<| ->
-	[
-		it,
-		it with do
-			target: [1, 1]
-			conds: map (-> it with target: [1, 1]), it.conds
-			units: map (-> it with target: [1, 1]), it.units
-	]
-# straight move
-<| do
-	danger: true
-	target: [0, 1]
-	conds:
-		* 
+	...Sym.sym4
+		# diagonal move
+		<| ->
+			[
+				it,
+				it with do
+					target: [1, 1]
+					conds: map (-> it with target: [1, 1]), it.conds
+					units: map (-> it with target: [1, 1]), it.units
+			]
+		# straight move
+		<| do
+			danger: true
 			target: [0, 1]
-			func: (not) . Cond.team (==)
-		...
-	units: 
-		* 
-			target: [0, 1]
-			func: Unit.move
-		...
+			conds:
+				* 
+					target: [0, 1]
+					func: (not) . Cond.team (==)
+				...
+			units: 
+				* 
+					target: [0, 1]
+					func: Unit.move
+				...

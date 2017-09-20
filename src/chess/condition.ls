@@ -1,19 +1,19 @@
 require! './position.js': Pos
 
 export count = (func) ->
-	not-empty = empty false, offset
+	not-empty = empty false
 	(piece, position, target, board) ->
 		not-empty ... and func do
 			(.count) <| Pos.at board <| Pos.add position.target
 
 export type = (func) ->
-	not-empty = empty false, offset
+	not-empty = empty false
 	(piece, position, target, board) ->
 		not-empty ... and func do
 			(.type) <| Pos.at board <| Pos.add position, target
 
 export team = (func) ->
-	not-empty = empty false, offset
+	not-empty = empty false
 	(piece, position, target, board) ->
 		not-empty ... and func piece.team do
 			(.team) <| Pos.at board <| Pos.add position, target

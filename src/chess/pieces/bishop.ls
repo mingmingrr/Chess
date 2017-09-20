@@ -2,7 +2,7 @@ require! '../unit.js': Unit
 require! '../condition.js': Cond
 require! '../symmetry.js': Sym
 
-export symbols = <[\u2657 \265d]>
+export symbols = <[\u2657 \u265d]>
 export actions = Sym.sym4 <| map _, [1 to 7] <| ->
 	danger: true
 	target: [it, it]

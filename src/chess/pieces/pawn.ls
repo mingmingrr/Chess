@@ -4,7 +4,7 @@ require! '../symmetry.js': Sym
 require! './index.js': Pieces
 
 export symbols = <[\u2659 \u265f]>
-export actions = (++) do
+export actions =
 	* # intial move
 		danger: false
 		target: [0, 2]
@@ -47,44 +47,43 @@ export actions = (++) do
 						target: [0, 0]
 						func: Cond.row (==8)
 					...
-<| Sym.sym2
-<| (-> &) do
-	* # diagonal attack
-		danger: true
-		target: [1, 1]
-		conds:
-			* 
-				target: [1, 1]
-				func: Cond.team (!=)
-			...
-		units:
-			* 
-				target: [1, 1]
-				func: Unit.move
-			...
-	* # en passant
-		danger: true
-		target: [1, 0]
-		conds:
-			* 
-				target: [0, 0]
-				func: Cond.count (==2)
-			* 
-				target: [1, 1]
-				func: Cond.empty true
-			* 
-				target: [0, 0]
-				func: Cond.row (==4)
-			* 
-				target: [1, 0]
-				func: Cond.type (==Pieces.Pawn)
-			* 
-				target: [1, 0]
-				func: Cond.count (==1)
-		units:
-			* 
-				target: [1, 0]
-				func: Unit.kill
-			* 
-				target: [1, 1]
-				func: Unit.move
+	...Sym.sym2 (-> &) do
+		* # diagonal attack
+			danger: true
+			target: [1, 1]
+			conds:
+				* 
+					target: [1, 1]
+					func: Cond.team (!=)
+				...
+			units:
+				* 
+					target: [1, 1]
+					func: Unit.move
+				...
+		* # en passant
+			danger: true
+			target: [1, 0]
+			conds:
+				* 
+					target: [0, 0]
+					func: Cond.count (==2)
+				* 
+					target: [1, 1]
+					func: Cond.empty true
+				* 
+					target: [0, 0]
+					func: Cond.row (==4)
+				* 
+					target: [1, 0]
+					func: Cond.type (==Pieces.Pawn)
+				* 
+					target: [1, 0]
+					func: Cond.count (==1)
+			units:
+				* 
+					target: [1, 0]
+					func: Unit.kill
+				* 
+					target: [1, 1]
+					func: Unit.move

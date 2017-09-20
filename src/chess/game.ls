@@ -9,7 +9,7 @@ Team :: Int
 Piece :: {
 	type :: Type
 	team :: Team
-	safe :: Bool
+	count :: Int
 	danger :: [Team]
 }
 

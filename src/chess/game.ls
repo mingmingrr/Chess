@@ -23,10 +23,12 @@ export move = (position, target, board) ->
 			then unit.func position, unit.target, board
 			else board
 
-export dangers = (board) ->
+export dangers = ({board}) ->
 	for pieces, y in board
 		for piece, x in pieces
-			if piece is not null
+			switch piece
+			| null => continue
+			| otherwise =>
 				valids board, [x, y]
 				|> filter (.danger)
 				|> map -> Pos.add [x, y], it.target

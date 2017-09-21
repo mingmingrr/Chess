@@ -3,9 +3,11 @@ require! './position.js' : Pos
 export spawn = (types, get-type=null, carry-count=true) ->
 	(position, target, board) ->
 		get-type ?= window.get-type
+		position = Pos.add position, target
 		type = if Array.is-array types then get-type types else types
-		count = if carry-count then (board `Pos.at` position).count else 0
-		Pos.set _, board, Pos.add position, target
+		count = if carry-count
+			then (board `Pos.at` position).count else 0
+		Pos.set _, board, position
 			<| {} <<< (board `Pos.at` position) <<< {type:type, count:count}
 		return board
 

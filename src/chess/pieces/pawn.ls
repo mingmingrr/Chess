@@ -1,7 +1,6 @@
 require! '../unit.js': Unit
 require! '../condition.js': Cond
 require! '../symmetry.js': Sym
-require! './index.js': Pieces
 
 export symbols = <[\u2659 \u265f]>
 export actions =
@@ -38,12 +37,10 @@ export actions =
 				func: Unit.move
 				conds: []
 			* 
-				target: [0, 0]
-				func: Unit.spawn <| (-> &) do
-					Pieces.Queen
-					Pieces.Knight
-					Pieces.Rook
-					Pieces.Bishop
+				target: [0, 1]
+				func: Unit.spawn <| map do
+					-> require "./#it.js"
+					<[queen knight rook bishop]>
 				conds:
 					* 
 						target: [0, 1]
@@ -64,12 +61,10 @@ export actions =
 					func: Unit.move
 					conds: []
 				* 
-					target: [0, 0]
-					func: Unit.spawn <| (-> &) do
-						Pieces.Queen
-						Pieces.Knight
-						Pieces.Rook
-						Pieces.Bishop
+					target: [1, 1]
+					func: Unit.spawn <| map do
+						-> require "./#it.js"
+						<[queen knight rook bishop]>
 					conds:
 						* 
 							target: [0, 1]
@@ -90,7 +85,7 @@ export actions =
 					func: Cond.row (==4)
 				* 
 					target: [1, 0]
-					func: Cond.type (==Pieces.Pawn)
+					func: Cond.type (==require './pawn.js')
 				* 
 					target: [1, 0]
 					func: Cond.count (==1)

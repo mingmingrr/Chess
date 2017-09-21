@@ -6,6 +6,9 @@ require! './chess/pieces/index.js': Pieces
 
 trace = -> console.log it; it
 
+window.get-type = (types) ->
+	types[parse-int prompt ((map (.symbols), types) * ', ')]
+
 state =
 	nodes: document.query-selector-all '.board .row'
 		|> map (.query-selector-all \.cell) |> reverse
@@ -50,11 +53,9 @@ move = (position, target, state) ->
 	return state
 
 highlight = ({board, nodes}, position, css='valid') ->
-	Game.valids board, position
+	[{target:[0, 0]}] ++ Game.valids board, position
 	|> map ({target}) !->
-		Pos.at nodes, (Pos.add position, target)
-		|> trace
-		|> (.class-list.add css)
+		Pos.at nodes, (Pos.add position, target) .class-list.add css
 	return state
 
 unhighlight = ({nodes}, css='valid') ->
@@ -72,8 +73,8 @@ for nodes, y in state.nodes
 			highlight state, JSON.parse position
 		node.add-event-listener \drop, !->
 			unhighlight state
-			state := sync <| move do
-				position = JSON.parse it.data-transfer.get-data \text
-				Pos.sub _, position <| JSON.parse it.target.get-attribute \p
-				state
+			position = JSON.parse it.data-transfer.get-data \text
+			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
+			return if Pos.eq target, [0, 0]
+			state := move position, target, state |> sync
 

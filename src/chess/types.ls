@@ -26,13 +26,13 @@ Action :: {
 
 Condition :: {
 	target :: Position
-	func :: Piece -> Position -> Position -> Board -> Bool
+	func :: Position -> Position -> Board -> Bool
 }
 
 Unit :: {
 	target :: Position
 	conds :: [Condition] = []
-	func :: Piece -> Position -> Position -> Board -> Board
+	func :: Position -> Position -> Board -> Board
 }
 
 */

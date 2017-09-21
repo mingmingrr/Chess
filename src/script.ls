@@ -49,9 +49,8 @@ for ns, row in state.nodes
 		node.add-event-listener \drop, ->
 			position = JSON.parse it.data-transfer.get-data \text
 			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
-			piece = Pos.at state.board, position
-			return unless Game.valid piece, position, target, state.board
-			Game.move piece, position, target, state.board
+			return unless Game.valid position, target, state.board
+			Game.move position, target, state.board
 			console.log \state, state
 			sync!
 

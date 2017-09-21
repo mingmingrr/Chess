@@ -43,7 +43,9 @@ state = sync state
 move = (position, target, state) ->
 	unless Game.valid position, target, state.board
 		throw new Error 'invalid move' # for redundancy
+	piece = state.board `Pos.at` position
 	state.board = Game.move position, target, state.board
+	piece.count += 1
 	console.log \state, state
 	return state
 

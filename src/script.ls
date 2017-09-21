@@ -65,16 +65,25 @@ unhighlight = ({nodes}, css='valid') ->
 for nodes, y in state.nodes
 	for node, x in nodes
 		node.set-attribute \p, JSON.stringify [x, y]
+
+		node.add-event-listener \mouseover, !->
+			position = JSON.parse it.target.get-attribute \p
+			piece = state.board `Pos.at` position
+			return unless piece? and piece.team == state.team
+			highlight state, position
+		node.add-event-listener \mouseout, !->
+			unhighlight state
+
 		node.add-event-listener \dragover, !->
 			it.prevent-default!
 		node.add-event-listener \dragstart, !->
 			position = it.target.get-attribute \p
 			it.data-transfer.set-data \text, position
-			highlight state, JSON.parse position
 		node.add-event-listener \drop, !->
-			unhighlight state
 			position = JSON.parse it.data-transfer.get-data \text
 			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
 			return if Pos.eq target, [0, 0]
-			state := move position, target, state |> sync
+			state := state
+			|> move position, target, _
+			|> sync
 

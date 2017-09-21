@@ -3,7 +3,6 @@ export add = zip-with (+)
 export sub = zip-with (-)
 
 export at = (board, [x, y]) -->
-	console.log \Pos-at, [x, y]
 	board[y][x]
 
 export set = (value, board, [x, y]) -->

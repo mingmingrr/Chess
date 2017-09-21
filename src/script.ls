@@ -1,4 +1,3 @@
-require! 'prelude-ls': Prelude
 global import Prelude
 
 require! './chess/game.js': Game
@@ -32,21 +31,25 @@ sync = (state) ->
 	zip-with do
 		zip-with !->
 			[&0.text-content, drag] = switch
-				| not &1? =>
-					['', false]
-				| state.team == &1.team =>
-					[&1.type.symbols[&1.team], true]
-				| otherwise =>
-					[&1.type.symbols[&1.team], false]
+			| not &1? => ['', false]
+			| ((==) `over` (.team)) state, &1 => [&1.type.symbols[&1.team], true]
+			| otherwise => [&1.type.symbols[&1.team], false]
 			&0.set-attribute \draggable, drag
 		state.nodes
 		state.board
 	return state
 state = sync state
 
-for ns, row in state.nodes
-	for node, col in ns
-		node.set-attribute \p, JSON.stringify [col, row]
+move = (position, target, state) ->
+	unless Game.valid position, target, state.board
+		throw new Error 'invalid move' # for redundancy
+	state.board = Game.move position, target, state.board
+	console.log \state, state
+	return state
+
+for ns, y in state.nodes
+	for node, x in ns
+		node.set-attribute \p, JSON.stringify [x, y]
 		node.add-event-listener \dragover, !->
 			it.prevent-default!
 		node.add-event-listener \dragstart, !->
@@ -56,8 +59,5 @@ for ns, row in state.nodes
 		node.add-event-listener \drop, !->
 			position = JSON.parse it.data-transfer.get-data \text
 			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
-			return unless Game.valid position, target, state.board
-			Game.move position, target, state.board
-			console.log \state, state
-			state := sync state
+			state := move position, target, state |> sync
 

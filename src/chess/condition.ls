@@ -1,3 +1,4 @@
+require! './game.js': Game
 require! './position.js': Pos
 
 export count = (func) ->

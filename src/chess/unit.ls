@@ -21,6 +21,6 @@ export move = (position, target, board) ->
 export yank = (direction) ->
 	(position, target, board) ->
 		pos = Pos.add position, target
-		Pos.set (board `Pos.at` position), board, <| Pos.add pos, direction
+		Pos.set (board `Pos.at` pos), board, <| Pos.add pos, direction
 		Pos.set null, board, pos
 		return board

@@ -17,17 +17,17 @@ export actions =
 			...map _, [-1 to -3 by -1] <| ->
 				target: [it, 0]
 				func: Cond.empty true
-			...map _, [0 to -4 by -1] <| ->
-				target: [it, 0]
-				func: Cond.safe true
+			# ...map _, [0 to -4 by -1] <| ->
+			# 	target: [it, 0]
+			# 	func: Cond.safe true
 		units:
 			* 
-				target: [-2, 0]
+				target: [-3, 0]
 				func: Unit.move
 				conds: []
 			* 
 				target: [-4, 0]
-				func: Unit.yank [3, 0]
+				func: Unit.yank [2, 0]
 				conds: []
 	* # castling king side
 		danger: false
@@ -42,9 +42,9 @@ export actions =
 			...map _, [1 to 2] <| ->
 				target: [it, 0]
 				func: Cond.empty true
-			...map _, [0 to 3] <| ->
-				target: [it, 0]
-				func: Cond.safe true
+			# ...map _, [0 to 3] <| ->
+			# 	target: [it, 0]
+			# 	func: Cond.safe true
 		units:
 			* 
 				target: [2, 0]

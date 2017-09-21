@@ -24,3 +24,16 @@ export move = (position, target, board) ->
 			then unit.func position, unit.target, board
 			else board
 
+export dangers = (board) ->
+	for pieces, y in board
+		for piece, x in pieces
+			if piece is not null
+				valids board, [x, y]
+				|> filter (.danger)
+				|> map -> Pos.add [x, y], it.target
+	|> concat
+
+export flip-board = reverse
+
+export flip-team = (team) ->
+	1 - team

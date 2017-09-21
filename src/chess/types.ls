@@ -10,7 +10,6 @@ Piece :: {
 	type :: Type
 	team :: Team
 	count :: Int
-	danger :: [Team]
 }
 
 Type :: {

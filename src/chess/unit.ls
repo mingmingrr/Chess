@@ -2,6 +2,7 @@ require! './position.js' : Pos
 
 export spawn = (types, get-type=null, carry-count=true) ->
 	(piece, position, target, board) ->
+		get-type ?= window.get-type
 		type = if Array.is-array types then get-type types else types
 		count = if carry-count then piece.count else 0
 		Pos.set _, board, Pos.add position, target

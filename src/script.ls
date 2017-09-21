@@ -42,24 +42,38 @@ state = sync state
 
 move = (position, target, state) ->
 	unless Game.valid position, target, state.board
-		throw new Error 'invalid move' # for redundancy
+		throw new Error 'invalid move'
 	piece = state.board `Pos.at` position
-	state.board = Game.move position, target, state.board
 	piece.count += 1
+	state.board = Game.move position, target, state.board
 	console.log \state, state
 	return state
 
-for ns, y in state.nodes
-	for node, x in ns
+highlight = ({board, nodes}, position, css='valid') ->
+	Game.valids board, position
+	|> map ({target}) !->
+		Pos.at nodes, (Pos.add position, target)
+		|> trace
+		|> (.class-list.add css)
+	return state
+
+unhighlight = ({nodes}, css='valid') ->
+	map _, nodes <| map -> it.class-list.remove css
+	return state
+
+for nodes, y in state.nodes
+	for node, x in nodes
 		node.set-attribute \p, JSON.stringify [x, y]
 		node.add-event-listener \dragover, !->
 			it.prevent-default!
 		node.add-event-listener \dragstart, !->
-			it.data-transfer.set-data \text, do
-				it.target.get-attribute \p
-			position = JSON.parse it.target.get-attribute \p
+			position = it.target.get-attribute \p
+			it.data-transfer.set-data \text, position
+			highlight state, JSON.parse position
 		node.add-event-listener \drop, !->
-			position = JSON.parse it.data-transfer.get-data \text
-			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
-			state := move position, target, state |> sync
+			unhighlight state
+			state := sync <| move do
+				position = JSON.parse it.data-transfer.get-data \text
+				Pos.sub _, position <| JSON.parse it.target.get-attribute \p
+				state
 

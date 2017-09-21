@@ -17,7 +17,6 @@ export valids = (board, position) ->
 		satisfies-conds board, position, action.conds
 
 export move = (position, target, board) ->
-	throw new Error 'invalid move' unless valid ...
 	action = find-action ...
 	fold _, board, action.units <| (board, unit) ->
 		if satisfies-conds board, position, unit.conds
@@ -33,7 +32,10 @@ export dangers = (board) ->
 				|> map -> Pos.add [x, y], it.target
 	|> concat
 
-export flip-board = reverse
+export flip-board = ({team, board}:state) ->
+	state.board = reverse board if team == 1
+	return state
 
-export flip-team = (team) ->
-	1 - team
+export flip-team = ({team}:state) ->
+	state.team = 1 - team
+	return state

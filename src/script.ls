@@ -42,6 +42,7 @@ sync = (state) ->
 		state.board
 	return state
 state = sync state
+window.state = state
 
 move = (position, target, state) ->
 	unless Game.valid position, target, state.board
@@ -62,28 +63,27 @@ unhighlight = ({nodes}, css='valid') ->
 	map _, nodes <| map -> it.class-list.remove css
 	return state
 
-for nodes, y in state.nodes
-	for node, x in nodes
-		node.set-attribute \p, JSON.stringify [x, y]
+for let ns, y in state.nodes
+	for let node, x in ns
+		console.log \position, [y, x], Game.find-piece node, state.nodes
 
 		node.add-event-listener \mouseover, !->
-			position = JSON.parse it.target.get-attribute \p
-			piece = state.board `Pos.at` position
+			piece = state.board `Pos.at` (Game.find-piece node, state.nodes)
 			return unless piece? and piece.team == state.team
-			highlight state, position
+			highlight state, Game.find-piece node, state.nodes
 		node.add-event-listener \mouseout, !->
 			unhighlight state
 
-		node.add-event-listener \dragover, !->
-			it.prevent-default!
+		node.add-event-listener \dragover, (.prevent-default!)
 		node.add-event-listener \dragstart, !->
-			position = it.target.get-attribute \p
-			it.data-transfer.set-data \text, position
+			it.data-transfer.set-data \text, do
+				JSON.stringify Game.find-piece node, state.nodes
 		node.add-event-listener \drop, !->
 			position = JSON.parse it.data-transfer.get-data \text
-			target = Pos.sub _, position <| JSON.parse it.target.get-attribute \p
+			target = Game.find-piece node, state.nodes |> Pos.sub _, position
 			return if Pos.eq target, [0, 0]
 			state := state
 			|> move position, target, _
+			|> Game.flip-all
 			|> sync
 

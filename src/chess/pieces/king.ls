@@ -6,7 +6,7 @@ export symbols = <[\u2654 \u265a]>
 export actions =
 	* # castling queen side
 		danger: false
-		target: [-4, 0]
+		target: [-2, 0]
 		conds:
 			* 
 				target: [0, 0]
@@ -22,16 +22,16 @@ export actions =
 			# 	func: Cond.safe true
 		units:
 			* 
-				target: [-3, 0]
+				target: [-2, 0]
 				func: Unit.move
 				conds: []
 			* 
 				target: [-4, 0]
-				func: Unit.yank [2, 0]
+				func: Unit.yank [3, 0]
 				conds: []
 	* # castling king side
 		danger: false
-		target: [3, 0]
+		target: [2, 0]
 		conds:
 			* 
 				target: [0, 0]
